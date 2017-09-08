@@ -5,24 +5,24 @@ namespace backend\models;
 use Yii;
 
 /**
- * This is the model class for table "brand".
+ * This is the model class for table "article".
  *
  * @property integer $id
  * @property string $name
  * @property string $intro
- * @property string $logo
+ * @property integer $article_category_id
  * @property integer $sort
- * @property integer $statu
+ * @property integer $status
+ * @property integer $create_time
  */
-class Brand extends \yii\db\ActiveRecord
+class Article extends \yii\db\ActiveRecord
 {
-    public $file;//保存文件上传的对象
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'brand';
+        return 'article';
     }
 
     /**
@@ -32,11 +32,8 @@ class Brand extends \yii\db\ActiveRecord
     {
         return [
             [['intro'], 'string'],
-            [['sort', 'statu'], 'integer'],
+            [['article_category_id', 'sort', 'status', 'create_time'], 'integer'],
             [['name'], 'string', 'max' => 50],
-            [['logo'], 'string', 'max' => 255],
-            //验证文件上传文件 extensions指的是文件的扩展名
-//            ['file','file','extensions'=>['jpg','png']],
         ];
     }
 
@@ -47,11 +44,12 @@ class Brand extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => '品牌名称',
+            'name' => '文章名称',
             'intro' => '简介',
-            'logo' => 'logo',
+            'article_category_id' => '文章分类',
             'sort' => '排序',
-            'statu' => '状态',
+            'status' => '状态',
+            'create_time' => '创建时间',
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\ArticleCategory;
 use yii\data\Pagination;
 
+
 class ArticleCategoryController extends \yii\web\Controller
 {
     public function actionIndex()
@@ -28,7 +29,7 @@ class ArticleCategoryController extends \yii\web\Controller
         if($request->isPost){
             $model->load($request->post());
             if($model->validate()){
-                $model->save();
+                $model->save(false);
                 //设置提示信息
                 \Yii::$app->session->setFlash('success','添加成功!');
                 return $this->redirect(['article-category/index']);
@@ -45,7 +46,7 @@ class ArticleCategoryController extends \yii\web\Controller
             //加载数据
             $model->load($request->post());
             if($model->validate()){
-                $model->save();
+                $model->save(false);
                 //设置提示信息
                 \Yii::$app->session->setFlash('success','修改成功!');
                 return $this->redirect(['article-category/index']);
@@ -54,10 +55,11 @@ class ArticleCategoryController extends \yii\web\Controller
         return $this->render('add',['model'=>$model]);
     }
     public function actionDel($id){
-        $model=Brand::findOne(['id'=>$id]);
+        $model=ArticleCategory::findOne(['id'=>$id]);
         $model->status=-1;
-        $model->save();
+        $model->save(false);
         \Yii::$app->session->setFlash('success','删除成功!');
         return $this->redirect(['brand/index']);
     }
+
 }

@@ -3,8 +3,10 @@
 namespace backend\controllers;
 
 use backend\models\Brand;
+use flyok666\qiniu\Qiniu;
 use yii\data\Pagination;
 use yii\web\UploadedFile;
+use flyok666\uploadifive\UploadAction;
 
 class BrandController extends \yii\web\Controller
 {
@@ -28,17 +30,8 @@ class BrandController extends \yii\web\Controller
         $request=\Yii::$app->request;
         if($request->isPost){
             $model->load($request->post());
-            //处理上传文件 实例化上传文件对象
-            $model->file=UploadedFile::getInstance($model,'file');
             if($model->validate()){
-                if ($model->file){
-                    //移动文件 move_uploaded_file()
-                    $file='/upload/'.uniqid().'.'.$model->file->getExtension();//文件名（含路径）
-                    //保存文件 指定路径
-                    $model->file->saveAs(\Yii::getAlias('@webroot').$file,false);
-                    $model->logo=$file;//上传文件的地址
-                }
-                $model->save();
+                $model->save(false);
                 //设置提示信息
                 \Yii::$app->session->setFlash('success','添加成功!');
                 return $this->redirect(['brand/index']);
@@ -53,17 +46,8 @@ class BrandController extends \yii\web\Controller
         if($request->isPost){
             //加载数据
             $model->load($request->post());
-            //处理上传文件 实例化上传文件对象
-            $model->file=UploadedFile::getInstance($model,'file');
             if($model->validate()){
-                if ($model->file){
-                    //移动文件 move_uploaded_file()
-                    $file='/upload/'.uniqid().'.'.$model->file->getExtension();//文件名（含路径）
-                    //保存文件 指定路径
-                    $model->file->saveAs(\Yii::getAlias('@webroot').$file,false);
-                    $model->logo=$file;//上传文件的地址
-                }
-                $model->save();
+                $model->save(false);
                 //设置提示信息
                 \Yii::$app->session->setFlash('success','修改成功!');
                 return $this->redirect(['brand/index']);
@@ -71,11 +55,74 @@ class BrandController extends \yii\web\Controller
         }
         return $this->render('add',['model'=>$model]);
     }
-    public function actionDel($id){
+    public function actionDel(){
+        $id=\Yii::$app->request->post('id');
         $model=Brand::findOne(['id'=>$id]);
-        $model->statu=-1;
-        $model->save();
-        \Yii::$app->session->setFlash('success','删除成功!');
-        return $this->redirect(['brand/index']);
+        if($model){
+            $model->statu=-1;
+            $model->save(false);
+            return 'success';
+        }
+       return 'fail';
+    }
+
+
+    public function actions() {
+        return [
+            's-upload' => [
+                'class' => UploadAction::className(),
+                'basePath' => '@webroot/upload',
+                'baseUrl' => '@web/upload',
+                'enableCsrf' => true, // default
+                'postFieldName' => 'Filedata', // default
+                //BEGIN METHOD
+//                'format' => [$this, 'methodName'],
+                //END METHOD
+                //BEGIN CLOSURE BY-HASH
+                'overwriteIfExist' => true,
+//                'format' => function (UploadAction $action) {
+//                    $fileext = $action->uploadfile->getExtension();
+//                    $filename = sha1_file($action->uploadfile->tempName);
+//                    return "{$filename}.{$fileext}";
+//                },
+                //END CLOSURE BY-HASH
+                //BEGIN CLOSURE BY TIME
+                'format' => function (UploadAction $action) {
+                    $fileext = $action->uploadfile->getExtension();
+                    $filehash = sha1(uniqid() . time());
+                    $p1 = substr($filehash, 0, 2);
+                    $p2 = substr($filehash, 2, 2);
+                    return "{$p1}/{$p2}/{$filehash}.{$fileext}";
+                },
+                //END CLOSURE BY TIME
+                'validateOptions' => [
+                    'extensions' => ['jpg', 'png'],
+                    'maxSize' => 1 * 1024 * 1024, //file size
+                ],
+                'beforeValidate' => function (UploadAction $action) {
+                    //throw new Exception('test error');
+                },
+                'afterValidate' => function (UploadAction $action) {},
+                'beforeSave' => function (UploadAction $action) {},
+                'afterSave' => function (UploadAction $action) {
+//                    $action->output['fileUrl'] = $action->getWebUrl();
+//                    $action->getFilename(); // "image/yyyymmddtimerand.jpg"
+//                    $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
+//                    $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"绝对路径
+                    //将图片上传到七牛云，并且返回七牛云的图片地址
+
+
+
+                    $qiniu = new Qiniu(\Yii::$app->params['qiniuyun']);
+                    $key = $action->getWebUrl();
+                    //上传到七牛云,同时制定一个key（名称，文件名）
+                    $file=$action->getSavePath();
+                    $qiniu->uploadFile($file,$key);
+                    //获取七牛云上文件的url地址
+                    $url = $qiniu->getLink($key);
+                    $action->output['fileUrl'] =$url;
+                },
+            ],
+        ];
     }
 }
