@@ -37,7 +37,10 @@ class ArticleDetail extends \yii\db\ActiveRecord
     {
         return [
             'article_id' => '文章id',
-            'content' => '简介',
+            'content' => '文章内容',
         ];
+    }
+    public function getArticle(){
+        return $this->hasOne(Article::className(),['id'=>'article_id']);
     }
 }

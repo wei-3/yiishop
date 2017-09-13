@@ -3,6 +3,8 @@
 namespace backend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "article".
@@ -51,5 +53,20 @@ class Article extends \yii\db\ActiveRecord
             'status' => '状态',
             'create_time' => '创建时间',
         ];
+    }
+    //添加时间行为
+    public function behaviors()
+    {
+        return [
+            [
+                'class'=>TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
+                ],
+            ]
+        ];
+    }
+    public function getCategroy(){
+        return $this->hasOne(ArticleCategory::className(),['id'=>'article_category_id']);
     }
 }

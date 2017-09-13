@@ -14,7 +14,7 @@ class ArticleCategoryController extends \yii\web\Controller
         //实例化分页工具条
         $pager=new Pagination([
             //总页数
-            'totalCount'=>$query->where(['>','statu','-1'])->count(),
+            'totalCount'=>$query->where(['>','status','-1'])->count(),
             //每页多少条
             'defaultPageSize'=>2,
         ]);
@@ -54,12 +54,28 @@ class ArticleCategoryController extends \yii\web\Controller
         }
         return $this->render('add',['model'=>$model]);
     }
-    public function actionDel($id){
+    public function actionDel(){
+        $id=\Yii::$app->request->post('id');
         $model=ArticleCategory::findOne(['id'=>$id]);
-        $model->status=-1;
-        $model->save(false);
-        \Yii::$app->session->setFlash('success','删除成功!');
-        return $this->redirect(['brand/index']);
+        if($model){
+            $model->status=-1;
+            $model->save(false);
+            return 'success';
+        }
+        return 'fail';
+    }
+    public function actions()
+    {
+        return [
+            'upload' => [
+                'class' => 'kucha\ueditor\UEditorAction',
+                'config' =>[
+                    "imageUrlPrefix"  => "",//图片访问路径前缀
+                    "imagePathFormat" => "/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}",
+                    "imageRoot" => \Yii::getAlias("@webroot"),
+                ]
+            ],
+        ];
     }
 
 }

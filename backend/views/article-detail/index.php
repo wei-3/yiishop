@@ -1,9 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 ?>
-<h1>article-detail/index</h1>
-
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+<div class="panel panel-default">
+    <div class="panel-heading text-center"><h2><?=$model->article->name?></h2></div>
+    <div class="panel-body">&nbsp;&nbsp;<?=$model->content?></div>
+</div>

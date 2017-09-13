@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2017/9/7 0007
- * Time: 下午 3:17
- */
+
 use yii\web\JsExpression;
 $form=\yii\bootstrap\ActiveForm::begin();
 echo $form->field($model,'name')->textInput();
-echo $form->field($model,'intro')->textarea(['rows'=>5]);
-
+echo $form->field($model,'intro')->textarea(['rows'=>3]);
 echo $form->field($model,'logo')->hiddenInput();
 //外部TAG
 echo \yii\bootstrap\Html::fileInput('test', NULL, ['id' => 'test']);

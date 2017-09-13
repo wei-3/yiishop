@@ -66,7 +66,7 @@ class BrandController extends \yii\web\Controller
        return 'fail';
     }
 
-
+    //选择文件
     public function actions() {
         return [
             's-upload' => [
@@ -105,14 +105,11 @@ class BrandController extends \yii\web\Controller
                 'afterValidate' => function (UploadAction $action) {},
                 'beforeSave' => function (UploadAction $action) {},
                 'afterSave' => function (UploadAction $action) {
-//                    $action->output['fileUrl'] = $action->getWebUrl();
+//                    $action->output['fileUrl'] = $action->getWebUrl();//获取图片路径
 //                    $action->getFilename(); // "image/yyyymmddtimerand.jpg"
 //                    $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
 //                    $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"绝对路径
                     //将图片上传到七牛云，并且返回七牛云的图片地址
-
-
-
                     $qiniu = new Qiniu(\Yii::$app->params['qiniuyun']);
                     $key = $action->getWebUrl();
                     //上传到七牛云,同时制定一个key（名称，文件名）
@@ -122,6 +119,14 @@ class BrandController extends \yii\web\Controller
                     $url = $qiniu->getLink($key);
                     $action->output['fileUrl'] =$url;
                 },
+            ],
+            'upload' => [
+                'class' => 'kucha\ueditor\UEditorAction',
+                'config' =>[
+                    "imageUrlPrefix"  => "",//图片访问路径前缀
+                    "imagePathFormat" => "/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}",
+                    "imageRoot" => \Yii::getAlias("@webroot"),
+                ]
             ],
         ];
     }

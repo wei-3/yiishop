@@ -1,9 +1,12 @@
 <?php
 /* @var $this yii\web\View */
 ?>
+<style>
+  th { text-align: center;}
+</style>
 <nav aria-label="...">
     <ul class="pager">
-        <li class="previous"><a href="<?=\yii\helpers\Url::to(['brand/add'])?>"><span aria-hidden="true">&larr;</span> 添加品牌</a></li>
+        <li class="previous"><a href="<?=\yii\helpers\Url::to(['brand/add'])?>"> 添加品牌&nbsp;<span aria-hidden="true">&rarr;</span> </a></li>
     </ul>
 </nav>
 <table class="table table-bordered table-responsive active text-info table-hover">
