@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\Brand;
 use flyok666\qiniu\Qiniu;
 use yii\data\Pagination;
+use yii\filters\AccessControl;
 use yii\web\UploadedFile;
 use flyok666\uploadifive\UploadAction;
 
@@ -130,4 +131,5 @@ class BrandController extends \yii\web\Controller
             ],
         ];
     }
+
 }

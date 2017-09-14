@@ -4,6 +4,7 @@ namespace backend\controllers;
 use backend\models\Goods;
 use backend\models\GoodsGallery;
 use flyok666\uploadifive\UploadAction;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 class GoodsGalleryController extends \yii\web\Controller
@@ -65,6 +66,8 @@ class GoodsGalleryController extends \yii\web\Controller
                     $model->path = $action->getWebUrl();
                     $model->save();
                     //返回到页面的路劲
+                    $id=\Yii::$app->db->getLastInsertID();
+                    $action->output['id'] = $id;
                     $action->output['fileUrl'] = $model->path;
                 },
             ],

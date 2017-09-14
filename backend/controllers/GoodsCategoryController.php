@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\GoodsCategory;
 use yii\data\Pagination;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 class GoodsCategoryController extends \yii\web\Controller
@@ -56,7 +57,7 @@ class GoodsCategoryController extends \yii\web\Controller
 
             if($model->validate()){
                 if($parent_id<$model->parent_id){
-                    \Yii::$app->session->setFlash('error','不能修改在!');
+                    \Yii::$app->session->setFlash('error','不能修改!');
                     return $this->redirect(['goods-category/index']);
                 }
                 //判断是否是顶级分类

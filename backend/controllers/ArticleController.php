@@ -6,6 +6,7 @@ use backend\models\Article;
 use backend\models\ArticleCategory;
 use backend\models\ArticleDetail;
 use yii\data\Pagination;
+use yii\filters\AccessControl;
 
 
 class ArticleController extends \yii\web\Controller
@@ -91,4 +92,5 @@ class ArticleController extends \yii\web\Controller
             ],
         ];
     }
+
 }

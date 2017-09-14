@@ -31,7 +31,7 @@ function(file, data, response) {
         console.log(data.fileUrl);//返回打印路径
         //将文件上传路径写入logo字段的隐藏域
 //       $("#goods-logo").val(data.fileUrl);
-        var html='<tr data-id="'+data.goods_id+'">'
+        var html='<tr data-id="'+data.id+'">'
         html += '<td><img src="'+data.fileUrl+'" /></td>';
         html += '<td><button type="button" class="btn btn-default del_btn">删除</button></td>';
         html += '</tr>';

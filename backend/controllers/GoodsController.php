@@ -12,6 +12,8 @@ use backend\models\GoodsSearchForm;
 use yii\data\Pagination;
 use flyok666\uploadifive\UploadAction;
 use flyok666\qiniu\Qiniu;
+use yii\filters\AccessControl;
+
 class GoodsController extends \yii\web\Controller
 {
     public function actionIndex()
@@ -174,4 +176,5 @@ class GoodsController extends \yii\web\Controller
             ],
         ];
     }
+
 }
