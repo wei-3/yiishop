@@ -23,11 +23,7 @@ use yii\web\IdentityInterface;
 class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public $password;
-    public $old_pwd;
-    public $new_pwd;
-    public $re_pwd;
     const SCENARIO_ADD='add';
-    const SCENARIO_UEDIT='edit2';
     /**
      * @inheritdoc
      */
@@ -43,8 +39,6 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['username','email'],'required'],
-            [['old_pwd','new_pwd','re_pwd'],'required','on'=>self::SCENARIO_UEDIT],
-            [['old_pwd','new_pwd','re_pwd'],'string'],
             ['password','required','on'=>self::SCENARIO_ADD],
             [['status', 'created_at', 'updated_at', 'last_login_time'], 'integer'],
             [['email','username'],'unique'],
@@ -87,10 +81,11 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             if($this->password){
                 $this->password_hash=\Yii::$app->security->generatePasswordHash($this->password);
                 $this->auth_key=Yii::$app->security->generateRandomString();
-            }elseif ($this->new_pwd){
-                $this->password_hash=\Yii::$app->security->generatePasswordHash($this->new_pwd);
-                $this->auth_key=Yii::$app->security->generateRandomString();
             }
+//            elseif ($this->new_pwd){
+//                $this->password_hash=\Yii::$app->security->generatePasswordHash($this->new_pwd);
+//                $this->auth_key=Yii::$app->security->generateRandomString();
+//            }
 
         }
         return parent::beforeSave($insert);

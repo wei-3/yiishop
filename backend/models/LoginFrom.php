@@ -30,8 +30,10 @@ class LoginFrom extends Model{
            //有该用户就判断密码是否正确
            if(\Yii::$app->security->validatePassword($this->password,$info->password_hash)){
                //如果判断成功就返回并保存该数据
+               //获取最后登录的ip
                $info->last_login_ip=\Yii::$app->request->userIP;
 //               var_dump($ip);exit;
+               //获取最后登录时间
                $info->last_login_time=time();
 //               var_dump($info->last_login_time);exit;
                $info->save(false);

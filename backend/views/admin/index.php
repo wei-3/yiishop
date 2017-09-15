@@ -21,9 +21,8 @@
             <td><?=$model->email?></td>
             <td><?=$model->status?'启用':'禁用'?></td>
             <td>
-                <a href="<?=\yii\helpers\Url::to(['admin/edit2','id'=>$model->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-eye-open">修改</span></a>
+                <a href="<?=\yii\helpers\Url::to(['admin/edit','id'=>$model->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-pencil">修改</span></a>
                 <a href="<?=\yii\helpers\Url::to(['admin/del','id'=>$model->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-trash"">删除</span></a>
-
             </td>
         </tr>
     <?php endforeach;?>

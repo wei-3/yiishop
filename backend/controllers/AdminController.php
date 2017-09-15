@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\Admin;
+use backend\models\CheckpwdForm;
 use backend\models\LoginFrom;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
@@ -55,71 +56,41 @@ class AdminController extends \yii\web\Controller
         }
         return $this->render('add',['model'=>$model]);
     }
+    //删除
     public function actionDel($id){
         $model=Admin::findOne(['id'=>$id]);
         $model->delete();
+        \Yii::$app->session->setFlash('success','删除成功');
         return $this->redirect(['admin/index']);
     }
-    public function actionEdit2($id){
-        //判断是否为登录状态
-        if(\Yii::$app->user->identity){//登录成功
-            //获取登录后的用户id
-            $log_id = \Yii::$app->user->id;
-//            var_dump($id);exit;
-            //判断登录后的id与修改时传过来的id是否匹配
-            if($log_id==$id){//成功
-                //根据传过来的id查询数据
-                $model=Admin::findOne(['id'=>$id]);
-                $model->scenario=Admin::SCENARIO_UEDIT;
-                $request=\Yii::$app->request;
-                //判断是否为post请求
-                if($request->isPost){
-                    $model->load($request->post());
-                    if($model->validate()){//验证数据
-                        //判断旧密码是否相等
-                        if(\Yii::$app->security->validatePassword($model->old_pwd,$model->password_hash)){
-                            //如果成功就判断新密码和确认密码是否相等
-                            if($model->new_pwd==$model->re_pwd){
-                                //保存之前会调用模型中的beforesava（）方法
-//                                $model->password_hash=\Yii::$app->security->generatePasswordHash($model->new_pwd);
-                                $model->save();
-                                \Yii::$app->session->setFlash('success','修改成功');
-                                return $this->redirect(['admin/index']);
-                            }else{
-                                throw new NotFoundHttpException('新密码和确认密码不一致');
-                            }
-                        }else{
-                            throw new NotFoundHttpException('旧密码错误');
-                        }
-                    }
-                }
-                return $this->render('useredit',['model'=>$model]);
-            }
-            elseif ($log_id==1){
-                $model=Admin::findOne(['id'=>$id]);
-                if($model==null){
-                    throw new NotFoundHttpException('该用户不存在');
-                }
-                $request=\Yii::$app->request;
-                if($request->isPost){
-                    $model->load($request->post());
-                    if($model->validate()){
-                        $model->save();
-                        \Yii::$app->session->setFlash('success','修改成功');
-                        return $this->redirect(['admin/index']);
-                    }
-                }
-                return $this->render('add',['model'=>$model]);
-            }
-            else{
-                //不匹配就提示没有此权限
-                throw new NotFoundHttpException('你没有此权限');
-            }
-        }else{
-            \Yii::$app->session->setFlash('error','请登录');
-            return $this->redirect(['admin/login']);
+    //修改自己的密码
+    public function actionPwd(){
+        //判断是否为游客
+        if(\Yii::$app->user->isGuest){
+            return $this->redirect(['login']);
         }
-
+        $model=new CheckpwdForm();
+        $request=\Yii::$app->request;
+        if($request->isPost){
+            $model->load($request->post());
+            if($model->validate()){
+                //验证旧密码 把它自定义为了验证规则
+//                \Yii::$app->user->identity =====  $model_admin=Admin::findOne(['id'=>\Yii::$app->user->id])
+//                if(\Yii::$app->security->validatePassword($model->old_pwd,\Yii::$app->user->identity->password_hash)){
+//                    //执行密码更新
+//                }else{
+//                    $model->addError('old_pwd','旧密码不正确');
+//                }
+                $admin=\Yii::$app->user->identity;
+//                var_dump($admin);exit;
+                $admin->password=$model->new_pwd;
+//                var_dump( $admin->password);exit;
+                $admin->save();
+                \Yii::$app->session->setFlash('success','修改密码成功');
+                return $this->redirect(['admin/index']);
+            }
+        }
+        return $this->render('pwd',['model'=>$model]);
     }
     //登录
     public function actionLogin(){
@@ -151,21 +122,21 @@ class AdminController extends \yii\web\Controller
         \Yii::$app->session->setFlash('success','退出成功');
         return $this->redirect('login');
     }
-    public function behaviors()
-    {
-        return [
-            'acf'=>[
-                'class'=>AccessControl::className(),
-                //不对以下操作有效
-               'except'=>['logout','login'],
-                'rules'=>[
-                    [
-                        'allow'=>true,//是否允许
-                        'actions'=>['index','edit','add','del','user','edit2'],//指定的操作
-                        'roles'=>['@']//指定的角色 ？表为登录
-                    ],
-                ],
-            ]
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'acf'=>[
+//                'class'=>AccessControl::className(),
+//                //不对以下操作有效
+//               'except'=>['logout','login'],
+//                'rules'=>[
+//                    [
+//                        'allow'=>true,//是否允许
+//                        'actions'=>['index','edit','add','del','user','edit2'],//指定的操作
+//                        'roles'=>['@']//指定的角色 ？表为登录
+//                    ],
+//                ],
+//            ]
+//        ];
+//    }
 }
