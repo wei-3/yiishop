@@ -36,7 +36,7 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => '首页', 'url' => ['/site/index']],
+//        ['label' => '首页', 'url' => ['/site/index']],
         ['label' => '品牌列表', 'url' => ['/brand/index']],
         ['label' => '文章列表', 'url' => ['/article/index']],
         ['label' => '文章分类列表', 'url' => ['/article-category/index']],
@@ -44,6 +44,8 @@ AppAsset::register($this);
         ['label' => '商品列表', 'url' => ['/goods/index']],
         ['label' => '用户列表', 'url' => ['/admin/index']],
         ['label' => '修改密码', 'url' => ['/admin/pwd']],
+        ['label' => '权限管理', 'url' => ['/rbac/index-permission']],
+        ['label' => '角色管理', 'url' => ['/rbac/role-index']],
 
     ];
     if (Yii::$app->user->isGuest) {

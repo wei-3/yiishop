@@ -60,7 +60,7 @@ echo $form->field($model_intro,'content')->widget('kucha\ueditor\UEditor',[
         'lang' =>'en', //中文为 zh-cn
     ]
 ]);
-echo \yii\bootstrap\Html::submitButton('提交');
+echo \yii\bootstrap\Html::submitButton('提交',['class'=>'btn btn-info']);
 \yii\bootstrap\ActiveForm::end();
 /**
  * @var $this \yii\web\View

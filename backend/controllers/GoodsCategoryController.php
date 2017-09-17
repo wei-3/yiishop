@@ -84,16 +84,18 @@ class GoodsCategoryController extends \yii\web\Controller
         }
         return $this->render('add',['model'=>$model]);
     }
-    public function actionDel($id){
-        $model = GoodsCategory::findOne(['id' => $id]);
-        //判断是否有子节点
+    public function actionDel(){
+        $id=\Yii::$app->request->post('id');
+        $model=GoodsCategory::findOne($id);
+//        //判断是否有子节点
+//        var_dump($model->isLeaf());exit;
         if($model->isLeaf()){//是否是叶子节点
             $model->deleteWithChildren();
+            return 'success';
         }else{
-            \Yii::$app->session->setFlash('error','不能删除有子节点!');
-            return $this->redirect(['goods-category/index']);
+            return 'pass';
         }
-        return $this->redirect(['goods-category/index']);
+        return 'fail';
     }
     public function actionZtree(){
         $goodsCategories=GoodsCategory::find()->select(['id','parent_id','name'])->asArray()->all();

@@ -49,7 +49,7 @@ echo \yii\bootstrap\Html::submitButton('搜索',['class'=>"btn btn-default glyph
             <td class="col-md-4">
                 <a href="<?=\yii\helpers\Url::to(['goods-gallery/gallery','id'=>$model->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-book">相册</span></a>
                 <a href="<?=\yii\helpers\Url::to(['goods/edit','id'=>$model->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-pencil">编辑</span></a>
-                <a href="javascript:;" class="btn btn-default del_btn" class="btn btn-default del_btn"><span class="glyphicon glyphicon-trash">删除</span></a>
+                <a href="javascript:;" class="btn btn-default del_btn" ><span class="glyphicon glyphicon-trash">删除</span></a>
                 <a href="<?=\yii\helpers\Url::to(['goods/detail','id'=>$model->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-eye-open">预览</span></a>
             </td>
         </tr>

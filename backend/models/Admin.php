@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -23,6 +24,7 @@ use yii\web\IdentityInterface;
 class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public $password;
+    public $roles;
     const SCENARIO_ADD='add';
     /**
      * @inheritdoc
@@ -39,6 +41,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['username','email'],'required'],
+            ['roles','safe'],
             ['password','required','on'=>self::SCENARIO_ADD],
             [['status', 'created_at', 'updated_at', 'last_login_time'], 'integer'],
             [['email','username'],'unique'],
@@ -75,6 +78,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             $this->password_hash=\Yii::$app->security->generatePasswordHash($this->password);
             $this->created_at=time();
             $this->auth_key=Yii::$app->security->generateRandomString();
+
         }else{
             //修改
             $this->updated_at=time();
@@ -82,15 +86,15 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
                 $this->password_hash=\Yii::$app->security->generatePasswordHash($this->password);
                 $this->auth_key=Yii::$app->security->generateRandomString();
             }
-//            elseif ($this->new_pwd){
-//                $this->password_hash=\Yii::$app->security->generatePasswordHash($this->new_pwd);
-//                $this->auth_key=Yii::$app->security->generateRandomString();
-//            }
 
         }
         return parent::beforeSave($insert);
     }
-
+   public static function getRole(){
+       $roles=Yii::$app->authManager->getRoles();
+       $items=ArrayHelper::map($roles,'name','description');
+       return $items;
+   }
     /**
      * Finds an identity by the given ID.
      * @param string|int $id the ID to be looked for

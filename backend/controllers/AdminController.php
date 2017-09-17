@@ -24,15 +24,28 @@ class AdminController extends \yii\web\Controller
     }
     public function actionAdd(){
         $model=new Admin();
+        $auth=\Yii::$app->authManager;
         $model->scenario=Admin::SCENARIO_ADD;
         $request=\Yii::$app->request;
         if($request->isPost){
             $model->load($request->post());
+//            var_dump($request->post());exit;
             //验证数据
             if($model->validate()){
                 //在保存之前要在模型中处理逻辑数据
+//                var_dump($model);exit;
 //                $model->password_hash=\Yii::$app->security->generatePasswordHash($model->password);
+//                var_dump($model->roles);exit;
                 $model->save(false);
+                $id=\Yii::$app->db->getLastInsertID();
+//                var_dump($id);exit;
+//                var_dump($model->roles);exit;
+            if($model->roles){
+                foreach ($model->roles as $roleName){
+                    $role=$auth->getRole($roleName);
+                    $auth->assign($role,$id);
+                }
+            }
                 \Yii::$app->session->setFlash('success','添加成功');
                 return $this->redirect(['admin/index']);
             }else{
@@ -42,7 +55,12 @@ class AdminController extends \yii\web\Controller
         return $this->render('add',['model'=>$model]);
     }
     public function actionEdit($id){
+        $auth=\Yii::$app->authManager;
         $model=Admin::findOne(['id'=>$id]);
+        $roles=$auth->getRolesByUser($id);
+         $model->roles=array_keys($roles);
+//        var_dump($roles);exit;
+//        $model->roles=$role;
         if($model==null){
             throw new NotFoundHttpException('该用户不存在');
         }
@@ -51,17 +69,37 @@ class AdminController extends \yii\web\Controller
             $model->load($request->post());
             if($model->validate()){
                 $model->save();
+                $auth->revokeAll($id);
+                if($model->roles){
+                    foreach ($model->roles as $roleName){
+                        $role=$auth->getRole($roleName);
+                        $auth->assign($role,$id);
+                    }
+                }
                 return $this->redirect(['admin/index']);
             }
         }
         return $this->render('add',['model'=>$model]);
     }
     //删除
-    public function actionDel($id){
-        $model=Admin::findOne(['id'=>$id]);
-        $model->delete();
-        \Yii::$app->session->setFlash('success','删除成功');
-        return $this->redirect(['admin/index']);
+    public function actionDel(){
+        $id=\Yii::$app->request->post('id');
+        $model=Admin::findOne($id);
+        $auth=\Yii::$app->authManager;
+        $roles=$auth->getRolesByUser($id);
+        $model->roles=array_keys($roles);
+        if($model->roles){
+            $auth->revokeAll($id);
+        }
+        if($model){
+            $model->delete();
+            return 'success';
+        }else{
+            return 'fail';
+        }
+    }
+    public function actionTest(){
+        var_dump(\Yii::$app->user->can('user/add'));
     }
     //修改自己的密码
     public function actionPwd(){
