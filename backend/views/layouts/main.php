@@ -35,22 +35,20 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-//        ['label' => '首页', 'url' => ['/site/index']],
-        ['label' => '品牌列表', 'url' => ['/brand/index']],
-        ['label' => '文章列表', 'url' => ['/article/index']],
-        ['label' => '文章分类列表', 'url' => ['/article-category/index']],
-        ['label' => '商品分类列表', 'url' => ['/goods-category/index']],
-        ['label' => '商品列表', 'url' => ['/goods/index']],
-        ['label' => '用户列表', 'url' => ['/admin/index']],
-        ['label' => '修改密码', 'url' => ['/admin/pwd']],
-        ['label' => '权限管理', 'url' => ['/rbac/index-permission']],
-        ['label' => '角色管理', 'url' => ['/rbac/role-index']],
-
-    ];
+//    $menuItems = [
+//        ['label' => '品牌列表', 'url' => ['/brand/index']],
+//        ['label' => '文章列表', 'url' => ['/article/index']],
+//    ];以把这个放入下面45行或者在模型中动态显示导航条（51行）
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['/admin/login']];
     } else {
+//        $menuItems = [
+//           ['label' => '用户管理', 'items'=>[
+//               ['label' => '添加用户', 'url' => ['site/index']],
+//               ['label' => '用户列表', 'url' => ['site/index']],
+//           ]],
+//       ];
+        $menuItems = Yii::$app->user->identity->getMenus();
         $menuItems[] = '<li>'
             . Html::beginForm(['/admin/logout'], 'post')
             . Html::submitButton(

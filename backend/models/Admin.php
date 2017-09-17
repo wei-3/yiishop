@@ -95,6 +95,32 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
        $items=ArrayHelper::map($roles,'name','description');
        return $items;
    }
+    public function getMenus(){
+//        在视图中layouts的main.php可以演示
+//        最原始数据(从数据库中查)
+//        ['id'=>1,'name'=>'用户管理','parent_id'=>0,'sort'=>1,'url'=>''],
+//        ['id'=>2,'name'=>'添加用户','parent_id=>1','sort'=>1,'url'=>'user/add'],
+//        ['id'=>3,'name'=>'修改用户','parent_id=>1','sort'=>1,'url'=>'user/edit'],
+//        需转换成以下
+//        ['label'=>'用户管理',items=>[
+//            ['label'=>'添加用户','url'=>'user/add']
+//            ['label'=>'修改用户','url'=>'user/edit']
+//        ]]
+        $menuItems=[];
+        //获取所有一级菜单
+        $menus=Menu::find()->where(['parent_id'=>0])->all();
+        //再遍历一级菜单
+        foreach ($menus as $menu){
+            //获取一级菜单中的子菜单
+            $childen=Menu::find()->where(['parent_id'=>$menu->id])->all();
+            $items=[];
+            foreach ($childen as $child){
+                $items[]=['label'=>$child->name,'url'=>[$child->url]];
+            }
+            $menuItems[]=['label'=>$menu->name,'items'=>$items];
+        }
+        return $menuItems;
+    }
     /**
      * Finds an identity by the given ID.
      * @param string|int $id the ID to be looked for
