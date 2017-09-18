@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RabcFilter;
 use backend\models\Admin;
 use backend\models\CheckpwdForm;
 use backend\models\LoginFrom;
@@ -163,17 +164,10 @@ class AdminController extends \yii\web\Controller
 //    public function behaviors()
 //    {
 //        return [
-//            'acf'=>[
-//                'class'=>AccessControl::className(),
+//            'rbac'=>[
+//                'class'=>RabcFilter::className(),
 //                //不对以下操作有效
-//               'except'=>['logout','login'],
-//                'rules'=>[
-//                    [
-//                        'allow'=>true,//是否允许
-//                        'actions'=>['index','edit','add','del','user','edit2'],//指定的操作
-//                        'roles'=>['@']//指定的角色 ？表为登录
-//                    ],
-//                ],
+//               'except'=>['logout','login','user'],
 //            ]
 //        ];
 //    }

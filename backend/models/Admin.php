@@ -108,16 +108,22 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 //        ]]
         $menuItems=[];
         //获取所有一级菜单
-        $menus=Menu::find()->where(['parent_id'=>0])->all();
-        //再遍历一级菜单
-        foreach ($menus as $menu){
-            //获取一级菜单中的子菜单
-            $childen=Menu::find()->where(['parent_id'=>$menu->id])->all();
-            $items=[];
-            foreach ($childen as $child){
-                $items[]=['label'=>$child->name,'url'=>[$child->url]];
+        $menus = Menu::find()->where(['parent_id'=>0])->all();
+//        var_dump($menus);exit;
+        foreach($menus as $menu){
+            //获取该一级菜单的所有子菜单
+            $children = Menu::find()->where(['parent_id'=>$menu->id])->all();
+//            var_dump($children);exit;
+            $items = [];
+            foreach ($children as $child){
+//                var_dump($child);exit;
+                //判断 当前用户是否有该路由的权限
+                if(Yii::$app->user->can($child->url)){
+                    $items[] = ['label' => $child->name, 'url' => [$child->url]];
+                }
             }
-            $menuItems[]=['label'=>$menu->name,'items'=>$items];
+            $menuItems[] = ['label' => $menu->name, 'items'=>$items];
+//            var_dump($menuItems);exit;
         }
         return $menuItems;
     }

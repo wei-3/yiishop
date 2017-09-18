@@ -36,14 +36,15 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+//            'suffix'=>'.html',//伪静态文件的后缀
             'rules' => [
             ],
         ],
-        */
+
     ],
     'params' => $params,
 ];

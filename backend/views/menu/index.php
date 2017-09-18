@@ -15,7 +15,13 @@
     </tr>
     <?php foreach ($models as $model):?>
         <tr data-id="<?=$model->id?>">
-            <td><?=$model->name?></td>
+            <td><?php
+                if($model->parent_id){
+                    echo str_repeat('==',2).$model->name;
+                }else{
+                    echo $model->name;
+                }
+                ?></td>
             <td><?=$model->url?></td>
             <td><?=$model->sort?></td>
             <td>
