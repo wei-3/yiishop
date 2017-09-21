@@ -43,7 +43,7 @@ class Goods extends \yii\db\ActiveRecord
             [['goods_category_id', 'brand_id', 'stock', 'is_on_sale', 'status', 'sort', 'create_time', 'view_times'], 'integer'],
             [['market_price', 'shop_price'], 'number'],
             [['name', 'sn', 'logo'], 'string', 'max' =>255],
-            ['cj','integer','max'=>2,'min'=>2,'tooBig'=>'必须选第三层级','tooSmall'=>'必须选第三层级']
+            ['cj','integer','max'=>3,'min'=>3,'tooBig'=>'必须选第三层级','tooSmall'=>'必须选第三层级']
         ];
     }
 

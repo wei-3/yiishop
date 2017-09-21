@@ -120,6 +120,7 @@ class AdminController extends \yii\web\Controller
 //                }else{
 //                    $model->addError('old_pwd','旧密码不正确');
 //                }
+                //获取当前登陆用户的信息
                 $admin=\Yii::$app->user->identity;
 //                var_dump($admin);exit;
                 $admin->password=$model->new_pwd;

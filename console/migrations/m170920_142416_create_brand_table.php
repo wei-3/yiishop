@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `brand`.
  */
-class m170907_064643_create_brand_table extends Migration
+class m170920_142416_create_brand_table extends Migration
 {
     /**
      * @inheritdoc

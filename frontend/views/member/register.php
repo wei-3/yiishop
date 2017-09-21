@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="/style/footer.css" type="text/css">
     <style>
         .error{color: red}
+        .c{color: red}
     </style>
 </head>
 <body>
@@ -51,7 +52,7 @@
 		</div>
 		<div class="login_bd">
 			<div class="login_form fl">
-				<form action="" method="post" id="signupForm">
+				<form action="<?=\yii\helpers\Url::to(['member/register'])?>" method="post" id="signupForm" >
 					<ul>
 						<li>
 							<label for="">用户名：</label>
@@ -60,12 +61,12 @@
 						</li>
 						<li>
 							<label for="">密码：</label>
-							<input type="password" class="txt" name="password" />
+							<input type="password" class="txt" name="password" id="password"/>
 							<p>6-20位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
 						</li>
 						<li>
 							<label for="">确认密码：</label>
-							<input type="password" class="txt" name="password" />
+							<input type="password" class="txt" name="confirm_password" />
 							<p> <span>请再次输入密码</p>
 						</li>
 						<li>
@@ -79,18 +80,18 @@
 						</li>
 						<li>
 							<label for="">验证码：</label>
-							<input type="text" class="txt" value="" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
+							<input type="text" class="txt" value="" placeholder="请输入短信验证码" name="sms" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
 							
 						</li>
 						<li class="checkcode">
 							<label for="">验证码：</label>
 							<input type="text"  name="checkcode" />
-							<img id="captcha_img" alt="" />
+							<img id="captcha_img" alt=""/>
+                            <span class="c"><?=isset($model->getErrors()["checkcode"][0])?$model->getErrors()["checkcode"][0]:''?></span>
 							<span>看不清？<a href="javascript:;" id="change_captcha">换一张</a></span>
 						</li>
-						
 						<li>
-							<label for="">&nbsp;</label>
+							<label for=""></label>
 							<input type="checkbox" class="chb" checked="checked" /> 我已阅读并同意《用户注册协议》
 						</li>
 						<li>
@@ -100,8 +101,6 @@
 						</li>
 					</ul>
 				</form>
-
-				
 			</div>
 			
 			<div class="mobile fl">
@@ -165,40 +164,125 @@
 				
 				$('#get_captcha').val(html);
 			},1000);
+            //发送短信
+            $.post("<?=\yii\helpers\Url::to(['member/sms'])?>",{phone:$("#tel").val(),'_csrf-frontend':'<?=Yii::$app->request->csrfToken?>'},function (data) {
+                console.debug(data);
+            })
 		}
         $().ready(function() {
 // 在键盘按下并释放及提交后验证提交表单
             $("#signupForm").validate({
                 rules: {
+                    //json格式
                     username: {
                         required: true,//用户名 必填
                         minlength: 3,
                         maxlength: 20,
+                        remote:"<?=\yii\helpers\Url::to(['member/validate-user'])?>"//验证用户名唯一,使用了get传参
                     },
+                    sms:{
+                        required: true,
+                        remote:{
+                            url:"<?=\yii\helpers\Url::to(['member/validate-sms'])?>",
+                            type:"get",
+                            data:{
+                                phone:function () {
+                                    return $('#tel').val();
+                                }
+                            }
+                        }
+                    },
+                    password: {
+                        required: true,
+                        minlength: 5,
+                        maxlength: 18
+                    },
+                    confirm_password: {
+                        required: true,
+                        minlength: 5,
+                        equalTo: "#password"
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    tel:{
+                        required: true,
+                        minlength: 11,
+                        maxlength: 11
+                    },
+                    checkcode:{
+                        required: true,
+                        validateCaptcha:true
+                    }//使用自定义验证规则验证验证码
+
                 },
                 messages: {
                     username: {
                         required: "请输入用户名",
-                        minlength: "用户名必需由3个字母组成",
-                        maxlength: "用户名不能超过20字母组成",
+                        minlength: "用户名必需由3个字符组成",
+                        maxlength: "用户名不能超过20字符组成",
                         remote: "用户名已存在"
                     },
+                    sms:{
+                        required: "请输入验证码",
+                        remote: "验证码错误"
+                    },
+                    password: {
+                        required: "请输入密码",
+                        minlength: "密码长度不能小于 5 个字符组成",
+                        maxlength: "密码不能超过10个字符组成"
+                    },
+                    confirm_password: {
+                        required: "请输入密码",
+                        minlength: "密码长度不能小于 5 个字母",
+                        equalTo: "两次密码输入不一致"
+                    },
+                    email: "请输入一个正确的邮箱",
+                    agree: "请接受我们的声明",
+                    tel:{
+                        required: "请输入电话号码",
+                        minlength: "长度不能小于 11 个数字",
+                        maxlength: "长度不能超过11个数字"
+                    },
+                    checkcode:{
+                        required: "验证码不能为空",
+                        validateCaptcha:"验证码错误"
+                    }
                   },
                 errorElement:'span'//错误信息的标签
+
                 });
             });
+		var hash;//为了获取图片的hash值，定义变量
 		//获取验证码(是yii2中验证码的路径(默认site/captcha)，在sitcontroller中captcha配置里的参数)
         var captcha_url='<?=\yii\helpers\Url::to(['site/captcha'])?>'
         //先获取新验证吗的url（也就是刷新验证码在site/captcha加参数?refresh=1）每次页面显示自动刷新（返回值是json）
         var change_captcha=function () {//封装后不会执行，需初始化
             $.getJSON(captcha_url,{refresh:1},function (json) {
                 $("#captcha_img").attr('src',json.url);
+                //获取hash
+                hash =json.hash1;
             });
-        }
-        //切换验证码
+        };
+        change_captcha();
+        //点击字切换验证码
         $('#change_captcha').click(function () {
             change_captcha();
-        })
+        });
+        //点击图片切换验证码
+        $('#captcha_img').click(function () {
+            change_captcha();
+        });
+        //添加自定义规则
+        jQuery.validator.addMethod("validateCaptcha", function(value, element) {
+            var h ;
+            for (var i = value.length - 1, h = 0; i >= 0; --i) {
+                h += value.charCodeAt(i);
+            }
+            return this.optional(element) || (h == hash);//测试成功返回测试结果
+        }, "验证码不正确");
+
 	</script>
 </body>
 </html>
