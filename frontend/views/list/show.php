@@ -695,7 +695,7 @@
                 <?php foreach ($models as $model): ?>
                     <li>
                         <dl>
-                            <dt><a href="<?=\yii\helpers\Url::to(['list/son','id'=>$model->goods_category_id])?>"><img src="<?=$model->logo?>" alt="" /></a></dt>
+                            <dt><a href="<?=\yii\helpers\Url::to(['list/son','id'=>$model->id])?>"><img src="<?=$model->logo?>" alt="" /></a></dt>
                             <dd><a href=""><?=$model->name?></a></dt>
                             <dd><strong><?=$model->shop_price?></strong></dt>
                             <dd><a href=""><em>已有20人评价</em></a></dt>

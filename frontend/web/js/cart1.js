@@ -24,6 +24,8 @@ $(function(){
 		});
 
 		$("#total").text(total.toFixed(2));
+        changeCart($(this).closest('tr').attr('data-id'),amount.val());
+
 	});
 
 	//增加
@@ -40,6 +42,8 @@ $(function(){
 		});
 
 		$("#total").text(total.toFixed(2));
+        changeCart($(this).closest('tr').attr('data-id'),amount.val());
+
 	});
 
 	//直接输入
@@ -56,8 +60,28 @@ $(function(){
 		$(".col5 span").each(function(){
 			total += parseFloat($(this).text());
 		});
-
 		$("#total").text(total.toFixed(2));
-
+        changeCart($(this).closest('tr').attr('data-id'),$(this).val());
 	});
+    $(".btn_del").click(function(){
+        if(confirm('确定删除该商品吗？')){
+            var tr = $(this).closest("tr");
+            var goods_id = tr.attr('data-id');
+            // console.log(goods_id);return false;
+            // console.log(goods_id);
+            $.post('/list/ajax?way=del',{goods_id:goods_id},function(data){
+                if(data=="success"){
+                    //后台删除成功
+                    tr.remove();
+                }
+            });
+        }
+    });
+
 });
+var changeCart=function (goods_id,amount) {
+	$.post("/list/ajax?way=edit",{goods_id:goods_id,amount:amount},function (data) {
+	})
+}
+
+

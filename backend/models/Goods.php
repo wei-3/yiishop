@@ -90,4 +90,7 @@ class Goods extends \yii\db\ActiveRecord
 //        var_dump(ArrayHelper::merge([$top],$goodsCategories));exit;
         return ArrayHelper::merge([$top],$goodsCategories);
     }
+    public function getGallery(){
+        return $this->hasMany(GoodsGallery::className(),['room_id'=>'id']);
+    }
 }

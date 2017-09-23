@@ -25,7 +25,15 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+                    <li>您好，欢迎来到京西！
+                        <?php if(Yii::$app->user->isGuest):?>
+                            [<a href="<?=\yii\helpers\Url::to(['member/login'])?>">登录</a>]
+                             [<a href="<?=\yii\helpers\Url::to(['member/register'])?>">免费注册</a>]
+                        <?php else:?>
+                            [<?php echo Yii::$app->user->identity->username?>]
+                            [<a href="<?=\yii\helpers\Url::to(['member/logout'])?>">注销</a>]
+                        <?php endif;?>
+                    </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -621,11 +629,11 @@
         <script type="text/javascript">
 
             $(".address_hd").on('click','.del_btn',function () {
-                if(confirm("确定删除该图片吗?")){
+                if(confirm("确定删除该地址吗?")){
                     var dl=$(this).closest('dl');
                     var id=dl.attr('data-id');
 //                    alert(1111);return false;
-                    $.post("<?=\yii\helpers\Url::to(['member/index'])?>",{id:id},function (data) {
+                    $.post("<?=\yii\helpers\Url::to(['member/del-adderss'])?>",{id:id},function (data) {
                         if(data=='success'){
                             dl.remove();
                         }

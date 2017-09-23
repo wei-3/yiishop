@@ -136,9 +136,9 @@
 	<!-- 底部版权 end -->
     <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
     <!--引入js库-->
-<!--    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>-->
-    <!--将该本地化信息文件 dist/localization/messages_zh.js 引入到页面-->
-<!--    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>-->
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    将该本地化信息文件 dist/localization/messages_zh.js 引入到页面
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
     <script type="text/javascript">
         function bindPhoneNum(){
             //启用输入框

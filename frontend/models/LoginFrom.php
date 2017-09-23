@@ -30,6 +30,7 @@ class LoginFrom extends Model{
                     return \Yii::$app->user->login($username,7*24*3600);
                 }
                     return \Yii::$app->user->login($username);
+
             }
             $this->getErrors('密码错误');
         }else{

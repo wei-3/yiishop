@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Address;
+use frontend\models\Cart;
 use frontend\models\LoginFrom;
 use frontend\models\Member;
 use frontend\models\SmsDemo;
@@ -10,7 +11,7 @@ use yii\web\ForbiddenHttpException;
 
 class MemberController extends \yii\web\Controller
 {
-
+public $enableCsrfValidation=false;
     public function actionRegister(){
         $model=new Member();
 //        $model->scenario=Member::SCENARIO_ADD;
@@ -55,6 +56,35 @@ class MemberController extends \yii\web\Controller
 //            var_dump($model);exit;
             if($model->validate()){
                 if($model->login()){
+                        //用户登录后，获取cookie的值，保存到数据库
+                    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                    $cookies = \Yii::$app->request->cookies;
+                    $value = $cookies->getValue('carts');
+        //   var_dump($value);exit;
+                    if($value){
+                        //反序列化cookie值(是字符串),转成数组，因为最开始把传的$goods_id值作为键，amount作为值存到了数组中
+                        $carts = unserialize($value);
+                        foreach($carts as $goods_id_cookie=>$amount){
+                            //检查数据表中是否有该商品
+                            $cart = Cart::findOne(['goods_id'=>$goods_id_cookie,'member_id'=>\Yii::$app->user->id]);
+                            if($cart){
+                                //如果有就更新该商品的数量
+                                $cart->amount+=$amount;
+                                $cart->save();
+                            }else{
+                                //没有，就添加该数据
+                                $model=new Cart();
+                                $model->amount=$amount;
+                                $model->member_id=\Yii::$app->user->identity->id;
+                                $model->goods_id=$goods_id_cookie;
+                                $model->save(false);
+
+                            }
+                        }
+                        //清除购物车cookie
+                       \Yii::$app->response->cookies->remove('carts');
+                    }
+                    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                     return $this->redirect(['list/index']);
                 }else{
                     throw new ForbiddenHttpException('用户名或密码错误');
@@ -88,6 +118,7 @@ class MemberController extends \yii\web\Controller
         if($request->isPost){
             $model->load($request->post(),'');
 //            var_dump($model->name);exit;
+            $model->member_id=\Yii::$app->user->identity->id;
             if($model->validate()){
                 $model->save(false);
                 return $this->redirect(['member/address']);
@@ -116,7 +147,7 @@ class MemberController extends \yii\web\Controller
     //删除收货地址
     public function actionDelAdderss(){
         $id = \Yii::$app->request->post('id');
-        var_dump($id);exit;
+//        var_dump($id);exit;
         $model=Address::findOne(['id'=>$id]);
         if($model && $model->delete()){
             return 'success';
@@ -173,4 +204,5 @@ class MemberController extends \yii\web\Controller
         $redis->set('name','张三');
         echo 'OK';
     }
+
 }

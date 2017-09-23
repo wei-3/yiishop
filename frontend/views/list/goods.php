@@ -46,12 +46,16 @@
                 <li>您好，欢迎来到京西！
                     <?php if(Yii::$app->user->isGuest):?>
                         [<a href="<?=\yii\helpers\Url::to(['member/login'])?>">登录</a>]
-                                                                                     [<a href="<?=\yii\helpers\Url::to(['member/register'])?>">免费注册</a>]
+                         [<a href="<?=\yii\helpers\Url::to(['member/register'])?>">免费注册</a>]
                     <?php else:?>
                         [<?php echo Yii::$app->user->identity->username?>]
                         [<a href="<?=\yii\helpers\Url::to(['member/logout'])?>">注销</a>]
                     <?php endif;?>
                 </li>
+                <li class="line">|</li>
+                <li>我的订单</li>
+                <li class="line">|</li>
+                <li>客户服务</li>
 
             </ul>
         </div>
@@ -122,7 +126,7 @@
                         <ul>
                             <li><a href=""><img src="/images/view_list1.jpg" alt="" /></a></li>
                             <li><a href=""><img src="/images/view_list2.jpg" alt="" /></a></li>
-                            <li><a href=""><img src="/p9images/view_list3.jpg" alt="" /></a></li>
+                            <li><a href=""><img src="/images/view_list3.jpg" alt="" /></a></li>
                         </ul>
                     </div>
                 </dd>
@@ -572,9 +576,9 @@
                     <a href="javascript:;" id="forward" class="on"></a>
                     <div class="smallpic_wrap">
                         <ul>
-                            <?php foreach ($gallerys as $gallery):?>
-                                <li class="cur">
-                                    <a class="zoomThumbActive" href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '+<?='http://admin.supershop.com'.$gallery->path?>+',largeimage: '+<?='http://admin.supershop.com'.$gallery->path?>+'}"><img src="<?='http://admin.supershop.com'.$gallery->path?>"></a>
+                            <?php foreach ($gallerys as $k=>$gallery ): /*var_dump($gallery);exit;*/?>
+                                <li <?=$k?'':'class="cur"'?>>
+                                    <a <?=$k?'':'class="zoomThumbActive"'?> href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '<?='http://admin.supershop.com'.$gallery->path?>',largeimage: '<?='http://admin.supershop.com'.$gallery->path?>'}"><img src="<?='http://admin.supershop.com'.$gallery->path?>"></a>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -593,7 +597,7 @@
                     <li><span>上架时间：</span><?=date('Y-m-d',$goods->create_time)?></li>
                     <li class="star"><span>商品评分：</span> <strong></strong><a href="">(已有21人评价)</a></li> <!-- 此处的星级切换css即可 默认为5星 star4 表示4星 star3 表示3星 star2表示2星 star1表示1星 -->
                 </ul>
-                <form action="" method="post" class="choose">
+                <form action="<?=\yii\helpers\Url::to(['addtocart'])?>" method="get" class="choose">
                     <ul>
 
                         <li>
@@ -611,6 +615,7 @@
                             <dl>
                                 <dt>&nbsp;</dt>
                                 <dd>
+                                    <input type="hidden" name="goods_id" value="<?=$goods->id?>"/>
                                     <input type="submit" value="" class="add_btn" />
                                 </dd>
                             </dl>
@@ -656,7 +661,7 @@
                     <div class="desc mt10">
                         <!-- 此处的内容 一般是通过在线编辑器添加保存到数据库，然后直接从数据库中读出 -->
                         <?php foreach ($gallerys as $gallery):?>
-                            <img src="<?=$gallery->path?>" alt="" style="width: 300px;" /><br/>
+                            <img src="<?='http://admin.supershop.com'.$gallery->path?>" alt="" style="width: 300px;" /><br/>
                         <?php endforeach;?>
                         <p style="height:10px;"><?=$intro->content?></p>
                     </div>
