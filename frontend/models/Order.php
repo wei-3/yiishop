@@ -35,8 +35,8 @@ class Order extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['member_id', 'delivery_id'], 'integer'],
-            [['delivery_price'], 'number'],
+            [['member_id', 'delivery_id','trade_no'], 'integer'],
+            [['delivery_price','total'], 'number'],
             [['name'], 'string', 'max' => 50],
             [['province', 'city', 'area'], 'string', 'max' => 20],
             [['address', 'delivery_name'], 'string', 'max' => 255],
@@ -61,6 +61,7 @@ class Order extends \yii\db\ActiveRecord
             'delivery_id' => '配送方式id',
             'delivery_name' => '配送方式名称',
             'delivery_price' => '配送方式价格',
+            'trade_no'=>'第三方支付交易号'
         ];
     }
     public static $deliveries = [
@@ -74,5 +75,10 @@ class Order extends \yii\db\ActiveRecord
         3=>['上门自提','自提时付款，支持现金、POS刷卡、支票支付'],
         4=>['邮局汇款','通过快钱平台收款 汇款后1-3个工作日到账'],
     ];
-
+//    public function GetOrder(){
+//        return $this->hasOne(OrderGoods::className(),['id'=>'goods_id']);
+//    }
+    public function GetOrder(){
+        return $this->hasOne(OrderGoods::className(),['order_id'=>'id']);
+    }
 }

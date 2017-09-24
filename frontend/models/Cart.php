@@ -46,7 +46,11 @@ class Cart extends \yii\db\ActiveRecord
             'member_id' => '用户id',
         ];
     }
+    //查询goods表中数据
     public function getGoods(){
-        return $this->hasMany(Goods::className(),['goods_id'=>'id']);
+        return $this->hasOne(Goods::className(),['id'=>'goods_id']);
+    }
+    public function getOrderid(){
+        return $this->hasMany(Order::className(),['member_id'=>'member_id']);
     }
 }

@@ -122,7 +122,9 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
                     $items[] = ['label' => $child->name, 'url' => [$child->url]];
                 }
             }
-            $menuItems[] = ['label' => $menu->name, 'items'=>$items];
+            if(!empty($items)) {
+                $menuItems[] = ['label' => $menu->name, 'items' => $items];
+            }
 //            var_dump($menuItems);exit;
         }
         return $menuItems;

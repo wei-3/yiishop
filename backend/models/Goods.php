@@ -90,7 +90,16 @@ class Goods extends \yii\db\ActiveRecord
 //        var_dump(ArrayHelper::merge([$top],$goodsCategories));exit;
         return ArrayHelper::merge([$top],$goodsCategories);
     }
+    //查询商品相册
     public function getGallery(){
-        return $this->hasMany(GoodsGallery::className(),['room_id'=>'id']);
+        return  $this->hasMany(GoodsGallery::className(),['goods_id'=>'id']);
+    }
+    //链表查询商品分类
+    public function getBrand(){
+        return $this->hasOne(Brand::className(),['id'=>'brand_id']);
+    }
+    //查询商品内容
+    public function getIntro(){
+        return $this->hasOne(GoodsIntro::className(),['id'=>'goods_id']);
     }
 }

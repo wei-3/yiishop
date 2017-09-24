@@ -21,14 +21,22 @@
 				
 			</div>
 			<div class="topnav_right fr">
-				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
-					<li class="line">|</li>
-					<li>我的订单</li>
-					<li class="line">|</li>
-					<li>客户服务</li>
+                <ul>
+                    <li>您好，欢迎来到京西！
+                        <?php if(Yii::$app->user->isGuest):?>
+                            [<a href="<?=\yii\helpers\Url::to(['member/login'])?>">登录</a>]
+                            [<a href="<?=\yii\helpers\Url::to(['member/register'])?>">免费注册</a>]
+                        <?php else:?>
+                            [<?php echo Yii::$app->user->identity->username?>]
+                            [<a href="<?=\yii\helpers\Url::to(['member/logout'])?>">注销</a>]
+                        <?php endif;?>
+                    </li>
+                    <li class="line">|</li>
+                    <li>我的订单</li>
+                    <li class="line">|</li>
+                    <li>客户服务</li>
 
-				</ul>
+                </ul>
 			</div>
 		</div>
 	</div>
@@ -50,7 +58,7 @@
 		</div>
 	</div>
 	<!-- 页面头部 end -->
-	
+    <form action="<?=\yii\helpers\Url::to(['order'])?>" method="post">
 	<div style="clear:both;"></div>
 
 	<!-- 主体部分 start -->
@@ -90,9 +98,9 @@
 						</thead>
 						<tbody>
                         <?php foreach (\frontend\models\Order::$deliveries as $key=>$val):?>
-							<tr <?=$key==3?'class="cur"':''?>>
+							<tr <?=$key==3?'class="cur"':''?> data-price="<?=$val[1]?>">
 								<td>
-									<input type="radio" name="delivery" value="<?=$key?>" checked="checked"/><?=$val[0]?>
+									<input type="radio" name="delivery_id"  value="<?=$key?>" checked="checked"/><?=$val[0]?>
 								</td>
 								<td>￥<?=$val[1]?></td>
 								<td><?=$val[2]?></td>
@@ -165,38 +173,35 @@
 						</tr>	
 					</thead>
 					<tbody>
+                        <?php $count=0;$num=0; foreach ($carts as $cart):?>
 						<tr>
-							<td class="col1"><a href=""><img src="/images/cart_goods1.jpg" alt="" /></a>  <strong><a href="">【1111购物狂欢节】惠JackJones杰克琼斯纯羊毛菱形格</a></strong></td>
-							<td class="col3">￥499.00</td>
-							<td class="col4"> 1</td>
-							<td class="col5"><span>￥499.00</span></td>
+							<td class="col1"><a href=""><img src="<?=$cart->goods->logo?>" alt="" /></a> <strong><a href=""><?=$cart->goods->name?></a></strong></td>
+							<td class="col3">￥<?=$cart->goods->shop_price?></td>
+							<td class="col4"><?=$cart->amount?></td>
+                            <input type="hidden" name="goods_id[]" value="<?=$cart->goods_id?>"/>
+							<td class="col5"><span>￥<?=($cart->goods->shop_price)*($cart->amount).'.00'?></span></td>
 						</tr>
-						<tr>
-							<td class="col1"><a href=""><img src="/images/cart_goods2.jpg" alt="" /></a> <strong><a href="">九牧王王正品新款时尚休闲中长款茄克EK01357200</a></strong></td>
-							<td class="col3">￥1102.00</td>
-							<td class="col4">1</td>
-							<td class="col5"><span>￥1102.00</span></td>
-						</tr>
+                        <?php $count+=($cart->goods->shop_price)*($cart->amount).'.00';  $num+=$cart->amount; endforeach;?>
 					</tbody>
 					<tfoot>
-						<tr>
-							<td colspan="5">
+                       <tr >
+                           <td colspan="5">
 								<ul>
 									<li>
-										<span>4 件商品，总商品金额：</span>
-										<em>￥5316.00</em>
+										<span><?=$num?> 件商品，总商品金额：</span>
+										<em  id="count" data-id="<?=$count?>">￥<?=$count?></em>
 									</li>
 									<li>
 										<span>返现：</span>
-										<em>-￥240.00</em>
+										<em>-￥0.00</em>
 									</li>
-									<li>
+									<li id="delivery_price">
 										<span>运费：</span>
-										<em>￥10.00</em>
+										<em>￥20</em>
 									</li>
-									<li>
-										<span>应付总额：</span>
-										<em>￥5076.00</em>
+									<li id="count_price">
+										<span >应付总额：</span>
+										<em >￥<?=$goods_count+10?></em>
 									</li>
 								</ul>
 							</td>
@@ -209,11 +214,11 @@
 		</div>
 
 		<div class="fillin_ft">
-			<a href=""><span>提交订单</span></a>
-			<p>应付总额：<strong>￥5076.00元</strong></p>
-			
+           <span><input type="submit" value="提交订单" class="add_btn" /></span>
+			<p>应付总额：<strong>￥<?=$goods_count+10?>元</strong></p>
 		</div>
 	</div>
+    </form>
 	<!-- 主体部分 end -->
 
 	<div style="clear:both;"></div>
@@ -243,5 +248,19 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
+<script type="text/javascript">
+    $(function () {
+        $("input[name='delivery_id']").click(function () {
+            var price=$(this).closest('tr').attr('data-price');
+//        console.log(price);
+            $('#delivery_price em').text('￥'+price);
+            var count=$("#count").attr('data-id');
+            var count_price=price+count;
+            console.log(count_price);
+            $('#count_price em').text('￥'+count_price);
+        });
+    })
+
+</script>
 </body>
 </html>

@@ -162,14 +162,14 @@ class AdminController extends \yii\web\Controller
         \Yii::$app->session->setFlash('success','退出成功');
         return $this->redirect('login');
     }
-//    public function behaviors()
-//    {
-//        return [
-//            'rbac'=>[
-//                'class'=>RabcFilter::className(),
-//                //不对以下操作有效
-//               'except'=>['logout','login','user'],
-//            ]
-//        ];
-//    }
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RabcFilter::className(),
+                //不对以下操作有效
+               'except'=>['logout','login','user'],
+            ]
+        ];
+    }
 }

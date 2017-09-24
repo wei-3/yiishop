@@ -1,14 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<script type="text/javascript" src="/js/jsaddresss.js"></script>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>收货地址</title>
+	<title>订单页面</title>
 	<link rel="stylesheet" href="/style/base.css" type="text/css">
 	<link rel="stylesheet" href="/style/global.css" type="text/css">
 	<link rel="stylesheet" href="/style/header.css" type="text/css">
 	<link rel="stylesheet" href="/style/home.css" type="text/css">
-	<link rel="stylesheet" href="/style/address.css" type="text/css">
+	<link rel="stylesheet" href="/style/order.css" type="text/css">
 	<link rel="stylesheet" href="/style/bottomnav.css" type="text/css">
 	<link rel="stylesheet" href="/style/footer.css" type="text/css">
 
@@ -24,14 +23,22 @@
 				
 			</div>
 			<div class="topnav_right fr">
-				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
-					<li class="line">|</li>
-					<li>我的订单</li>
-					<li class="line">|</li>
-					<li>客户服务</li>
+                <ul>
+                    <li>您好，欢迎来到京西！
+                        <?php if(Yii::$app->user->isGuest):?>
+                            [<a href="<?=\yii\helpers\Url::to(['member/login'])?>">登录</a>]
+                            [<a href="<?=\yii\helpers\Url::to(['member/register'])?>">免费注册</a>]
+                        <?php else:?>
+                            [<?php echo Yii::$app->user->identity->username?>]
+                            [<a href="<?=\yii\helpers\Url::to(['member/logout'])?>">注销</a>]
+                        <?php endif;?>
+                    </li>
+                    <li class="line">|</li>
+                    <li>我的订单</li>
+                    <li class="line">|</li>
+                    <li>客户服务</li>
 
-				</ul>
+                </ul>
 			</div>
 		</div>
 	</div>
@@ -436,7 +443,7 @@
 			<div class="menu_wrap">
 				<dl>
 					<dt>订单中心 <b></b></dt>
-					<dd><b>.</b><a href="">我的订单</a></dd>
+					<dd class="cur"><b>.</b><a href="">我的订单</a></dd>
 					<dd><b>.</b><a href="">我的关注</a></dd>
 					<dd><b>.</b><a href="">浏览历史</a></dd>
 					<dd><b>.</b><a href="">我的团购</a></dd>
@@ -444,7 +451,7 @@
 
 				<dl>
 					<dt>账户中心 <b></b></dt>
-					<dd class="cur"><b>.</b><a href="">账户信息</a></dd>
+					<dd><b>.</b><a href="">账户信息</a></dd>
 					<dd><b>.</b><a href="">账户余额</a></dd>
 					<dd><b>.</b><a href="">消费记录</a></dd>
 					<dd><b>.</b><a href="">我的积分</a></dd>
@@ -462,46 +469,51 @@
 		<!-- 左侧导航菜单 end -->
 
 		<!-- 右侧内容区域 start -->
-
 		<div class="content fl ml10">
-			<div class="address_bd mt10">
-				<h4>新增收货地址</h4>
-				<form action="" name="address_form" method="post">
-						<ul>
-							<li>
-								<label for=""><span>*</span>收 货 人：</label>
-								<input type="text" name="name" class="txt" value="<?=$eddress->name?>"/>
-							</li>
-							<li>
-                                <label for=""><span>*</span>所在地区：</label>
-                                <select id="cmbProvince" name="cmbProvince" ></select>
-                                <select id="cmbCity" name="cmbCity"></select>
-                                <select id="cmbArea" name="cmbArea"></select>
-                                <script type="text/javascript">
-                                    addressInit('cmbProvince', 'cmbCity', 'cmbArea','<?=$address->cmbProvince?>','<?=$address->cmbCity?>','<?=$address->cmbArea?>');
-                                </script>
-                            </li>
-							<li>
-								<label for=""><span>*</span>详细地址：</label>
-								<input type="text" name="address" class="txt address"  value="<?=$address->address_detail?>"/>
-							</li>
-							<li>
-								<label for=""><span>*</span>手机号码：</label>
-								<input type="text" name="tel" class="txt" value="<?=$address->tel?>"/>
-							</li>
-							<li>
-								<label for="">&nbsp;</label>
-								<input type="checkbox" name="" class="check" />设为默认地址
-							</li>
-							<li>
-								<label for="">&nbsp;</label>
-                                <input type="hidden" name="_csrf-frontend" value="<?=Yii::$app->request->csrfToken?>"/>
-								<input type="submit" name="" class="btn" value="保存" />
-							</li>
-						</ul>
-					</form>
-			</div>	
+			<div class="order_hd">
+				<h3>我的订单</h3>
+				<dl>
+					<dt>便利提醒：</dt>
+					<dd>待付款（0）</dd>
+					<dd>待确认收货（0）</dd>
+					<dd>待自提（0）</dd>
+				</dl>
 
+				<dl>
+					<dt>特色服务：</dt>
+					<dd><a href="">我的预约</a></dd>
+					<dd><a href="">夺宝箱</a></dd>
+				</dl>
+			</div>
+
+			<div class="order_bd mt10">
+				<table class="orders">
+					<thead>
+						<tr>
+							<th width="10%">订单号</th>
+							<th width="20%">订单商品</th>
+							<th width="10%">收货人</th>
+							<th width="20%">订单金额</th>
+							<th width="20%">下单时间</th>
+							<th width="10%">订单状态</th>
+							<th width="10%">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+                    <?php foreach ($models as $model):?>
+						<tr>
+							<td><a href=""><?=$model->trade_no?></a></td>
+							<td><a href=""><img src="<?=$model->order->logo?>" alt="" /></a></td>
+							<td><?=$model->name?></td>
+							<td>￥35.00 货到付款</td>
+							<td><?=date('Y-m-d H:i:s',$model->create_time)?></td>
+							<td>已取消</td>
+							<td><a href="">查看</a> | <a href="">删除</a></td>
+						</tr>
+                    <?php endforeach;?>
+					</tbody> 
+				</table>
+			</div>
 		</div>
 		<!-- 右侧内容区域 end -->
 	</div>
@@ -598,10 +610,6 @@
 			<a href=""><img src="/images/beian.gif" alt="" /></a>
 		</p>
 	</div>
-        <!-- 底部版权 end -->
-        <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
-         <!--引入js库-->
-        <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
-
+	<!-- 底部版权 end -->
 </body>
 </html>

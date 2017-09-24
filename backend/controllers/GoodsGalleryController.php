@@ -1,6 +1,7 @@
 <?php
 
 namespace backend\controllers;
+use backend\filters\RabcFilter;
 use backend\models\Goods;
 use backend\models\GoodsGallery;
 use flyok666\uploadifive\UploadAction;
@@ -72,6 +73,16 @@ class GoodsGalleryController extends \yii\web\Controller
                 },
             ],
 
+        ];
+    }
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RabcFilter::className(),
+                //不对以下操作有效
+                'except'=>['logout','login','user','s-upload','gallery'],
+            ]
         ];
     }
 

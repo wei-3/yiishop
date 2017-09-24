@@ -60,7 +60,6 @@
 	<!-- 页面头部 end -->
 	
 	<div style="clear:both;"></div>
-
 	<!-- 主体部分 start -->
 	<div class="mycart w990 mt10 bc">
 		<h2><span>我的购物车</span></h2>
@@ -98,7 +97,8 @@
 		</table>
 		<div class="cart_btn w990 bc mt10">
 			<a href="" class="continue">继续购物</a>
-			<a href="" class="checkout">结 算</a>
+			<a href="<?=\yii\helpers\Url::to(['list/order-index'])?>" class="checkout">结 算</a>
+<!--            <input type="button" value="结 算"/>-->
 		</div>
 	</div>
 	<!-- 主体部分 end -->

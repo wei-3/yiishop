@@ -133,7 +133,6 @@ public $enableCsrfValidation=false;
         $address=Address::findOne(['id'=>$id]);
         $request=\Yii::$app->request;
         if($request->isPost){
-
             $address->load($request->post(),'');
             if($address->validate()){
                 $address->save(false);
